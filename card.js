@@ -15,12 +15,12 @@ class Card {
         push();
 
         rectMode(CENTER);
+        
         noStroke();
-
-        fill('white');
+        fill(palette['ui']);
         rect(this.x, this.y, this.width, this.height, width * 0.02);
         
-        fill('black');
+        fill(palette['black']);
         textAlign(CENTER, CENTER);
         text(this.text, this.x, this.y, this.width * 0.9, this.height * 0.9);
         
