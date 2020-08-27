@@ -21,6 +21,7 @@ class Button {
 
         if (this.OnClick && this.IsUnderneathPoint(x,y)) {
             this.OnClick();
+            this.hoverState = false;
         }
         
     }
