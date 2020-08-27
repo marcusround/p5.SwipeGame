@@ -78,7 +78,7 @@ class FactorBar {
 
   SetPreviewMode(string) {
 
-    // 'FULL', 'PARTIAL' or 'NONE'
+    // 'FULL', 'PARTIAL', 'ALL' or 'NONE'
     // Anything else is equivalent to 'NONE'
 
     this.previewMode = string;
@@ -87,33 +87,23 @@ class FactorBar {
 
   Draw() {
 
-    const fullPreview = Boolean( this.previewMode == 'FULL' );
-    const positivePreview = Boolean( this.preview && this.preview > 0 );
-    const negativePreview = Boolean( this.preview && this.preview < 0 );
+    const fullPreview = Boolean( this.previewMode === 'FULL' || this.previewMode === 'ALL' );
+    const hintPreview = Boolean( this.previewMode === 'HINT' || this.previewMode === 'ALL' );
 
-    this.top = height * (yBottom - (yBottom - yTop) * this.factor.state / 100);
+    if ( fullPreview && this.preview ) {
     
-    let previewBarRounding = this.rounding;
+      this.top = height * (yBottom - (yBottom - yTop) * (this.factor.state + this.preview) / 100);
     
-    if ( fullPreview && positivePreview ) {
-      
-      this.previewTop = height * (yBottom - (yBottom - yTop) * (this.factor.state + this.preview) / 100);
-      this.previewBottom = this.top;
-      
-      previewBarRounding = 0;
-      
-    }
+    } else {
     
-    if ( fullPreview && negativePreview ) {
-
-      this.previewTop = this.top;
-      this.previewBottom = height * (yBottom - (yBottom - yTop) * (this.factor.state + this.preview) / 100);
-
+      this.top = height * (yBottom - (yBottom - yTop) * this.factor.state / 100);
+    
     }
 
     push();
 
     rectMode(CORNERS);
+    ellipseMode(CENTER);
     noStroke();
 
     const drawBGRect = () => {
@@ -124,15 +114,7 @@ class FactorBar {
     drawBGRect();
 
     fill(palette['foreground']);
-    rect(this.left, this.top, this.right, this.bottom, previewBarRounding, previewBarRounding, this.rounding, this.rounding);
-
-    if ( this.preview && fullPreview ) {
-
-      const previewFill = positivePreview ? palette['positive'] : palette['negative'];
-      fill(previewFill);
-      rect(this.left, this.previewTop, this.right, this.previewBottom, this.rounding, this.rounding, previewBarRounding, previewBarRounding);
-
-    }
+    rect(this.left, this.top, this.right, this.bottom, this.rounding);
     
     if (this.highlighted) {
       
@@ -146,6 +128,15 @@ class FactorBar {
       noStroke();
 
       this.tooltip.Draw(mouseX + 10, this.bottom + 10);
+      
+    }
+
+    if ( hintPreview && this.preview ) {
+
+      const r = ( this.preview < 10 ? 15 : 30 )
+
+      fill(palette['background-2']);
+      ellipse((this.left + this.right) / 2, this.bottom + 20, r, r);
       
     }
 

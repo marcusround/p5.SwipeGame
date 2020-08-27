@@ -208,7 +208,7 @@ function setup() {
     factorBars.push(new FactorBar({
       'index': i,
       'factor': factor,
-      'previewMode': 'FULL',
+      'previewMode': 'HINT',
     }));
 
   }
