@@ -57,6 +57,7 @@ function draw() {
     background(23, 45, 67);
     return;
   }
+
   
   background(palette['background']);
   
@@ -70,6 +71,9 @@ function draw() {
 
   factorBars.forEach(b => b.Draw());
   buttons.forEach(b => b.Draw());
+
+  activeCard.EvaluateMousePosition(mouseX, mouseY);
+  activeCard.Update();
   
 }
 
@@ -150,9 +154,19 @@ function loadCardsFromCSV(data) {
 }
 
 function mousePressed() {
+
   buttons.forEach(button => {
     button.EvaluateMousePress(mouseX, mouseY);
   });
+
+  activeCard.EvaluateMousePress(mouseX, mouseY);
+  
+}
+
+function mouseReleased() {
+
+  activeCard.EvaluateMouseReleased(mouseX, mouseY);
+  
 }
 
 function previewChoice(choice) {
