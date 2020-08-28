@@ -1,4 +1,6 @@
-const exampleCSVPath = 'assets/swipe_game_example.csv'
+const exampleCSVPath = 'assets/swipe_game_example.csv';
+
+const previewMode = 'HINT';
 
 let exampleCSV;
 
@@ -7,10 +9,8 @@ let cards, deck;
 
 const buttons = [];
 
-const factorCount = 4;
-const factors = [];
-const factorBars = [];
-const factorNames = ["Lorem", "Ipsum", "Dolor", "Sit amet"];
+let factors = [];
+let factorManager, factorDisplay;
 
 const palette = {
 
@@ -25,22 +25,10 @@ const palette = {
 
 }
 
-function applyEffects(card, choice) {
-
-  const effects = card.effects[choice];
-  
-  for (let i = 0; i < effects.length; i++) {
-    
-    factors[i].ApplyEffect(effects[i]);
-    
-  }
-  
-}
-
 function clearPreviews() {
   
-  factorBars.forEach(bar => {
-    bar.SetPreview(0);
+  factors.forEach(factor => {
+    factor.SetPreview(0);
   })
   
 }
@@ -58,7 +46,6 @@ function draw() {
     return;
   }
 
-  
   background(palette['background']);
   
   // Draw the active card to screen
@@ -67,9 +54,10 @@ function draw() {
   }
 
   buttons.forEach(b => b.EvaluateMousePosition(mouseX, mouseY));
-  factorBars.forEach(b => b.EvaluateMousePosition(mouseX, mouseY));
+  
+  factorDisplay.EvaluateMousePosition(mouseX, mouseY);
+  factorDisplay.Draw();
 
-  factorBars.forEach(b => b.Draw());
   buttons.forEach(b => b.Draw());
 
   activeCard.EvaluateMousePosition(mouseX, mouseY);
@@ -79,7 +67,7 @@ function draw() {
 
 function enactChoice( choice ) {
 
-  applyEffects(activeCard, choice);
+  factorManager.ApplyEffects(activeCard.GetEffects(choice));
 
   // Put active card back to bottom of deck
   deck.AddCardToBottom(activeCard);
@@ -100,35 +88,62 @@ function handleFile(file) {
     file.data,
     'csv',
     'header',
-    loadCardsFromCSV,
+    loadFromCSV,
     console.warn("Error loading CSV.")
     );
     
   }
 
-function loadCardsFromCSV(data) {
+function loadFromCSV(data) {
 
   cards = {};
+  factors = [];
   deck.Clear();
 
-  data.rows.forEach(row => {
+  // First row contains factor names
+  factorNames = data.rows[0];
+  let i = 1;
+  while (factorNames.get('factor' + i)) {
+    
+    const factor = new Factor({'name': factorNames.get('factor' + i)});
 
+    factors.push(factor);
+
+    i++;
+
+  }
+
+  factorManager.SetFactors(factors);
+
+  data.rows.forEach((row, index) => {
+
+    // Skip first row, which is factor names.
+    if (index === 0) { return; };
+    
     const card = new Card();
 
     card.id = row.get('id');
     card.text = row.get('text');
 
-    card.effects = {
+    const cardEffects = {
       'swipeYes': [],
       'swipeNo': []
     }
 
     let i = 1;
     while (row.get("yes" + i) || row.get("no" + i)) {
-      card.effects['swipeYes'].push(row.get("yes" + i));
-      card.effects['swipeNo'].push(row.get("no" + i));
+
+      const factorName = factors[i-1].name;
+      
+      cardEffects['swipeYes'][factorName] = row.getNum("yes" + i, 0);
+      cardEffects['swipeNo'][factorName] = row.getNum("no" + i, 0);
+
       i++;
+      
     }
+
+    card.SetEffects('swipeYes', cardEffects['swipeYes']);
+    card.SetEffects('swipeNo', cardEffects['swipeNo']);
 
     if (!(card.id && card.text)) {
       console.error("Invalid Card");
@@ -171,12 +186,9 @@ function mouseReleased() {
 
 function previewChoice(choice) {
   
-  let i = 0;
-  factorBars.forEach(bar => {
-    bar.SetPreview(activeCard.effects[choice][i]);
-    i++;
-  })
-
+  let effects = activeCard.GetEffects(choice);
+  factorManager.SetPreviews(effects);
+  
 }
 
 function setup() {
@@ -205,27 +217,26 @@ function setup() {
   fill(255);
 
   deck = new Deck();
+  factorManager = new FactorManager();
+  factorDisplay = new FactorDisplay( 
+    factorManager,
+    {
+      'x': 0.50,
+      'y': 0.75,
+      'width': 0.58,
+      'height': 0.32,
+      'padding': 0.1,
+      'rounding': 0.02,
+    }
+  );
 
   loadTable(
     exampleCSVPath,
     'csv',
     'header',
-    (t) => { exampleCSV = t; loadCardsFromCSV(t); },
+    (t) => { exampleCSV = t; loadFromCSV(t); },
     () => { console.warn("No example csv found.") }
   );
-
-  for (let i = 0; i < factorCount; i++) {
-
-    const factor = new Factor({'name': factorNames[i]});
-
-    factors.push(factor);
-    factorBars.push(new FactorBar({
-      'index': i,
-      'factor': factor,
-      'previewMode': 'HINT',
-    }));
-
-  }
 
   // Yes Button
   buttons.push(

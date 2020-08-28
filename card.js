@@ -11,6 +11,8 @@ class Card {
         this.isHeld = false;
         this.swipePosition = 0;
 
+        this._effects = {};
+
     }
 
     Draw() {
@@ -63,6 +65,20 @@ class Card {
         
     }
 
+    GetEffects(effectsType, effectsName = null) {
+
+        // eg.
+        //    effectsType = 'swipeYes', 'swipeNo'
+        //     effectName = 'Budget', 'Impressions'
+
+        if ( effectsName ) {
+            return this._effects[effectsType][effectsName];
+        } else {
+            return this._effects[effectsType];
+        }
+        
+    }
+
     IsUnderneathPoint(x,y) {
 
         return Boolean(
@@ -84,6 +100,16 @@ class Card {
 
         this.isHeld = false;
 
+    }
+
+    SetEffects(effectsType, effects) {
+
+        // eg.
+        //   effectsType = 'swipeYes'
+        //       effects = { 'Budget': -10, 'Impressions': +4 }
+
+        this._effects[effectsType] = effects;
+        
     }
     
     Update() {
