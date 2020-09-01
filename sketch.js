@@ -242,6 +242,8 @@ function mouseReleased() {
 }
 
 function previewChoice(choice) {
+
+  CardUI.
   
   let effects = activeCard.GetEffects(choice);
   factorManager.SetPreviews(effects);
@@ -282,13 +284,13 @@ function setup() {
     .position(w * 0.1, innerHeight - 80);
 
   createFileInput(handleFile)
-    .position(200, innerHeight - 65);
+    .position(250, innerHeight - 65);
 
   createP("It must match this layout:")
     .position(w * 0.1, innerHeight - 50);
 
   createButton("Download example CSV")
-    .position(200, innerHeight - 35)
+    .position(250, innerHeight - 35)
     .mousePressed(downloadExampleCSV);
 
   textSize(height * 0.04);
