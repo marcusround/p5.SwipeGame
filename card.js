@@ -8,10 +8,11 @@ class Card {
         this.width = width * 0.56;
         this.height = height * 0.44;
 
-        this.isHeld = false;
-        this.swipePosition = 0;
+        this._swipePosition = 0;
 
         this._effects = {};
+
+        this.SetSwipeState(0);
 
     }
 
@@ -19,10 +20,10 @@ class Card {
 
         push();
         
-        const xPos = this.x + this.swipePosition * width/4;
+        const xPos = this.x + this._swipePosition * width/4;
         translate(xPos, this.y);
 
-        const rot = this.swipePosition * Math.PI * 0.06;
+        const rot = this._swipePosition * Math.PI * 0.06;
         rotate(rot);
         
         rectMode(CENTER);
@@ -39,16 +40,6 @@ class Card {
 
     }
 
-    EvaluateMousePosition(x,y) {
-
-        if ( this.isHeld === true ) {
-
-            this.swipePosition = sineWaveMap(x / width, { 'mapMin': -Math.PI/2, 'mapMax': Math.PI/2 });
-
-        }
-        
-    }
-    
     EvaluateMousePress(x,y) {
 
         if ( this.IsUnderneathPoint(x,y) ) {
@@ -111,18 +102,17 @@ class Card {
         this._effects[effectsType] = effects;
         
     }
+
+    SetSwipeState(swipeState) {
+
+        this._swipeTarget = swipeState;
+        
+    }
     
     Update() {
 
-        if ( !this.isHeld ) {
-
-            this.swipePosition *= 0.74;
-
-            if (this.swipePosition < 0.01) {
-                this.swipePosition = 0;
-            }
-            
-        }
+        this._swipePosition += 0.06 * (this._swipeTarget - this._swipePosition);
+        console.log(this._swipePosition);
         
     }
 

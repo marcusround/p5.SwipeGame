@@ -8,6 +8,7 @@ let activeCard;
 let cards, deck;
 
 const buttons = [];
+let mouseClickX, swipeState = 0;
 
 let factors = [];
 let factorManager, factorDisplay;
@@ -23,6 +24,12 @@ const palette = {
   'ui': '#eeeeee',
   'black': '#123456',
 
+}
+
+const settings = {
+
+  'swipeSensitivity': 0.1,
+  
 }
 
 function clearPreviews() {
@@ -47,6 +54,33 @@ function draw() {
   }
 
   background(palette['background']);
+
+  // Swipe position logic
+  if ( mouseIsPressed ) {
+
+    let mouseDiff = mouseX - mouseClickX;
+
+    if ( mouseDiff > settings.swipeSensitivity * width ) {
+
+      swipeState = 1;
+
+    } else if ( mouseDiff < -settings.swipeSensitivity * width ) {
+
+      swipeState = -1;
+      
+    } else {
+
+      swipeState = 0;
+
+    }
+    
+    evaluateSwipePreview(swipeState);
+
+  } else {
+
+    swipeState = 0;
+    
+  }
   
   // Draw the active card to screen
   if (activeCard && activeCard.Draw) {
@@ -60,7 +94,7 @@ function draw() {
 
   buttons.forEach(b => b.Draw());
 
-  activeCard.EvaluateMousePosition(mouseX, mouseY);
+  // activeCard.EvaluateMousePosition(mouseX, mouseY);
   activeCard.Update();
   
 }
@@ -76,6 +110,23 @@ function enactChoice( choice ) {
   activeCard = deck.DealTopCard();
 
 }
+
+const evaluateSwipePreview = function() {
+
+  // Check if swipeState has changed since last time,
+  // then update UI accordingly.
+  
+  let prevSwipeState = 0;
+  return (swipeState) => {
+
+    if (swipeState === prevSwipeState) { return null; }
+    
+    prevSwipeState = swipeState;
+
+    setUIPreview(swipeState);
+    
+  }
+}();
 
 function handleFile(file) {
   
@@ -170,6 +221,8 @@ function loadFromCSV(data) {
 
 function mousePressed() {
 
+  mouseClickX = mouseX;
+
   buttons.forEach(button => {
     button.EvaluateMousePress(mouseX, mouseY);
   });
@@ -180,7 +233,11 @@ function mousePressed() {
 
 function mouseReleased() {
 
-  activeCard.EvaluateMouseReleased(mouseX, mouseY);
+  if (swipeState === 1) { enactChoice('swipeYes') } else
+  if (swipeState === -1){ enactChoice('swipeNo')  };
+  
+  // activeCard.SetSwipeState(swipeState);
+  // activeCard.EvaluateMouseReleased(mouseX, mouseY);
   
 }
 
@@ -190,6 +247,27 @@ function previewChoice(choice) {
   factorManager.SetPreviews(effects);
   
 }
+
+function setUIPreview(swipeState) {
+
+  activeCard.SetSwipeState(swipeState);
+
+  if (swipeState === 1) {
+
+    previewChoice('swipeNo');
+    
+  } else if (swipeState === -1) {
+
+    previewChoice('swipeYes');
+    
+  } else if (swipeState === 0) {
+
+    clearPreviews();
+    
+  }
+  
+}
+
 
 function setup() {
 
@@ -238,32 +316,32 @@ function setup() {
     () => { console.warn("No example csv found.") }
   );
 
-  // Yes Button
-  buttons.push(
-    new Button({
-      'id': 'swipeYes',
-      'x': width * 0.888,
-      'y': height * 0.33,
-      'radius': width * 0.065,
-      'colour': palette['positive'],
-      'OnHover': () => { previewChoice('swipeYes'); },
-      'OnHoverExit': () => { clearPreviews() },
-      'OnClick': () => { enactChoice('swipeYes'); },
-    }
-    ));
+  // // Yes Button
+  // buttons.push(
+  //   new Button({
+  //     'id': 'swipeYes',
+  //     'x': width * 0.888,
+  //     'y': height * 0.33,
+  //     'radius': width * 0.065,
+  //     'colour': palette['positive'],
+  //     'OnHover': () => { previewChoice('swipeYes'); },
+  //     'OnHoverExit': () => { clearPreviews() },
+  //     'OnClick': () => { enactChoice('swipeYes'); },
+  //   }
+  //   ));
 
-  // No Button
-  buttons.push(
-    new Button({
-      'id': 'swipeNo',
-      'x': width * 0.111,
-      'y': height * 0.33,
-      'radius': width * 0.065,
-      'colour': palette['negative'],
-      'OnHover': () => { previewChoice('swipeNo'); },
-      'OnHoverExit': () => { clearPreviews(); },
-      'OnClick': () => { enactChoice('swipeNo'); },
-    }
-    ));
+  // // No Button
+  // buttons.push(
+  //   new Button({
+  //     'id': 'swipeNo',
+  //     'x': width * 0.111,
+  //     'y': height * 0.33,
+  //     'radius': width * 0.065,
+  //     'colour': palette['negative'],
+  //     'OnHover': () => { previewChoice('swipeNo'); },
+  //     'OnHoverExit': () => { clearPreviews(); },
+  //     'OnClick': () => { enactChoice('swipeNo'); },
+  //   }
+  //   ));
 
 }
