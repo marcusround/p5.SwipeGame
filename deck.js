@@ -2,23 +2,23 @@ class Deck {
 
     constructor() {
 
-        this.Clear();
+        this.clear();
 
     }
 
-    AddCardToBottom(card) {
+    addCardToBottom(card) {
 
         this.stack.push(card);
 
     }
 
-    DealTopCard() {
+    dealTopCard() {
 
         return this.stack.splice(0,1)[0]; 
 
     }
 
-    Clear() {
+    clear() {
 
         this.stack = [];
         

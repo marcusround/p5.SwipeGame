@@ -8,7 +8,7 @@ class Factor {
 
   }
 
-  ApplyEffect(effect) {
+  applyEffect(effect) {
 
     this.state += Number(effect);
 
@@ -17,7 +17,7 @@ class Factor {
 
   }
 
-  SetPreview(x) {
+  setPreview(x) {
 
     this.preview = x;
     
@@ -27,24 +27,25 @@ class Factor {
 
 class FactorManager {
 
-  constructor(factors) {
+  constructor(game) {
 
     this.factorListeners = [];
-    this.SetFactors(factors);
+    this.game = game;
+    this.setFactors(game.factors);
 
   }
 
-  ApplyEffects(effects) {
+  applyEffects(effects) {
 
-    factors.forEach(factor => {
+    this.factors.forEach(factor => {
 
-      factor.ApplyEffect(effects[factor.name]);
+      factor.applyEffect(effects[factor.name]);
       
     });
 
   }
 
-  SetFactors(factors) {
+  setFactors(factors) {
 
     this.factors = [];
 
@@ -60,11 +61,11 @@ class FactorManager {
     
   }
   
-  SetPreviews(effects) {
+  setPreviews(effects) {
 
     factors.forEach(factor => {
 
-      factor.SetPreview(effects[factor.name]);
+      factor.setPreview(effects[factor.name]);
       
     });
     

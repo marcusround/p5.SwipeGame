@@ -1,17 +1,12 @@
-const exampleCSVPath = 'assets/swipe_game_example.csv';
-
 const previewMode = 'HINT';
-
-let exampleCSV;
 
 let activeCard;
 let cards, deck;
 
-const buttons = [];
-let mouseClickX, swipeState = 0;
+let game, ui;
+let buttons = [];
 
-let factors = [];
-let factorManager, factorDisplay;
+let mouseClickX, swipeState = 0;
 
 const palette = {
 
@@ -29,26 +24,31 @@ const palette = {
 const settings = {
 
   'swipeSensitivity': 0.1,
-  
+
 }
 
 function clearPreviews() {
-  
+
   factors.forEach(factor => {
     factor.SetPreview(0);
   })
-  
+
 }
 
-function downloadExampleCSV() {
-  
-  saveTable(exampleCSV, 'swipe_game_example.csv', 'csv');
-  
+function enactChoice() {
+
+}
+
+function dealNewCard() {
+
+  game.dealNewCard();
+  ui.onDealNewCard();
+
 }
 
 function draw() {
 
-  if (deck.stack.length === 0) {
+  if (!game.isActive) {
     background(23, 45, 67);
     return;
   }
@@ -56,166 +56,86 @@ function draw() {
   background(palette['background']);
 
   // Swipe position logic
-  if ( mouseIsPressed ) {
+  if (mouseIsPressed) {
 
     let mouseDiff = mouseX - mouseClickX;
 
-    if ( mouseDiff > settings.swipeSensitivity * width ) {
+    if (mouseDiff > settings.swipeSensitivity * width) {
 
       swipeState = 1;
 
-    } else if ( mouseDiff < -settings.swipeSensitivity * width ) {
+    } else if (mouseDiff < -settings.swipeSensitivity * width) {
 
       swipeState = -1;
-      
+
     } else {
 
       swipeState = 0;
 
     }
-    
+
     evaluateSwipePreview(swipeState);
 
   } else {
 
     swipeState = 0;
-    
-  }
-  
-  // Draw the active card to screen
-  if (activeCard && activeCard.Draw) {
-    activeCard.Draw();
+
   }
 
-  buttons.forEach(b => b.EvaluateMousePosition(mouseX, mouseY));
-  
-  factorDisplay.EvaluateMousePosition(mouseX, mouseY);
-  factorDisplay.Draw();
+  game.update();
+  ui.update();
 
-  buttons.forEach(b => b.Draw());
+  ui.draw();
 
-  // activeCard.EvaluateMousePosition(mouseX, mouseY);
-  activeCard.Update();
-  
 }
 
-function enactChoice( choice ) {
+function enactChoice(choice) {
 
-  factorManager.ApplyEffects(activeCard.GetEffects(choice));
+  game.enactChoice(choice);
+
+  // factorManager.ApplyEffects(activeCard.GetEffects(choice));
 
   // Put active card back to bottom of deck
-  deck.AddCardToBottom(activeCard);
+  // deck.AddCardToBottom(activeCard);
 
-  // Deal new card
-  activeCard = deck.DealTopCard();
+  // // Deal new card
+  // activeCard = deck.DealTopCard();
 
 }
 
-const evaluateSwipePreview = function() {
+const evaluateSwipePreview = function () {
 
   // Check if swipeState has changed since last time,
   // then update UI accordingly.
-  
+
   let prevSwipeState = 0;
   return (swipeState) => {
 
     if (swipeState === prevSwipeState) { return null; }
-    
+
     prevSwipeState = swipeState;
 
     setUIPreview(swipeState);
-    
+
   }
 }();
 
-function handleFile(file) {
-  
-  if (!file.name.endsWith('.csv')) {
-    console.warn("Uploaded non-CSV file.")
-    return null;
-  }
-  
-  return loadTable(
-    file.data,
-    'csv',
-    'header',
-    loadFromCSV,
-    console.warn("Error loading CSV.")
-    );
-    
-  }
+function keyPressed() {
 
-function loadFromCSV(data) {
+  switch (keyCode) {
 
-  cards = {};
-  factors = [];
-  deck.Clear();
+    case LEFT_ARROW:
+      enactChoice('swipeNo');
+      break;
 
-  // First row contains factor names
-  factorNames = data.rows[0];
-  let i = 1;
-  while (factorNames.get('factor' + i)) {
-    
-    const factor = new Factor({'name': factorNames.get('factor' + i)});
+    case RIGHT_ARROW:
+      enactChoice('swipeYes');
+      break;
 
-    factors.push(factor);
-
-    i++;
+    default:
+      return null;
 
   }
-
-  factorManager.SetFactors(factors);
-
-  data.rows.forEach((row, index) => {
-
-    // Skip first row, which is factor names.
-    if (index === 0) { return; };
-    
-    const card = new Card();
-
-    card.id = row.get('id');
-    card.text = row.get('text');
-
-    const cardEffects = {
-      'swipeYes': [],
-      'swipeNo': []
-    }
-
-    let i = 1;
-    while (row.get("yes" + i) || row.get("no" + i)) {
-
-      const factorName = factors[i-1].name;
-      
-      cardEffects['swipeYes'][factorName] = row.getNum("yes" + i, 0);
-      cardEffects['swipeNo'][factorName] = row.getNum("no" + i, 0);
-
-      i++;
-      
-    }
-
-    card.SetEffects('swipeYes', cardEffects['swipeYes']);
-    card.SetEffects('swipeNo', cardEffects['swipeNo']);
-
-    if (!(card.id && card.text)) {
-      console.error("Invalid Card");
-      return;
-    }
-
-    if (cards[card.id]) {
-      console.error("Duplicate card ID.");
-      return;
-    }
-
-    cards[card.id] = card;
-    deck.AddCardToBottom(card);
-
-  });
-
-  if (deck.stack.length == 0 || deck.stack[0] == undefined) {
-    console.error("No cards found in CSV")
-  }
-
-  activeCard = deck.DealTopCard();
 
 }
 
@@ -227,27 +147,25 @@ function mousePressed() {
     button.EvaluateMousePress(mouseX, mouseY);
   });
 
-  activeCard.EvaluateMousePress(mouseX, mouseY);
-  
+  // activeCard.EvaluateMousePress(mouseX, mouseY);
+
 }
 
 function mouseReleased() {
 
   if (swipeState === 1) { enactChoice('swipeYes') } else
-  if (swipeState === -1){ enactChoice('swipeNo')  };
-  
+    if (swipeState === -1) { enactChoice('swipeNo') };
+
   // activeCard.SetSwipeState(swipeState);
   // activeCard.EvaluateMouseReleased(mouseX, mouseY);
-  
+
 }
 
 function previewChoice(choice) {
 
-  CardUI.
-  
   let effects = activeCard.GetEffects(choice);
   factorManager.SetPreviews(effects);
-  
+
 }
 
 function setUIPreview(swipeState) {
@@ -257,93 +175,61 @@ function setUIPreview(swipeState) {
   if (swipeState === 1) {
 
     previewChoice('swipeNo');
-    
+
   } else if (swipeState === -1) {
 
     previewChoice('swipeYes');
-    
+
   } else if (swipeState === 0) {
 
     clearPreviews();
-    
-  }
-  
-}
 
+  }
+
+}
 
 function setup() {
 
+  
   // Fit to portrait 16:9
   const h = innerHeight - 100;
   const w = h * 9 / 16;
-
+  
   createCanvas(w, h)
-    .position(innerHeight * 0.025, innerHeight * 0.025);
-
+  .position(innerHeight * 0.025, innerHeight * 0.025);
+  
   createP("Upload custom CSV:")
-    .position(w * 0.1, innerHeight - 80);
-
+  .position(w * 0.1, innerHeight - 80);
+  
   createFileInput(handleFile)
-    .position(250, innerHeight - 65);
-
+  .position(250, innerHeight - 65);
+  
   createP("It must match this layout:")
-    .position(w * 0.1, innerHeight - 50);
-
+  .position(w * 0.1, innerHeight - 50);
+  
   createButton("Download example CSV")
-    .position(250, innerHeight - 35)
-    .mousePressed(downloadExampleCSV);
-
+  .position(250, innerHeight - 35)
+  .mousePressed(downloadExampleCSV);
+  
   textSize(height * 0.04);
   fill(255);
+  
+  game = new SwipeGame();
+  ui = new SwipeGameUI(game);
 
-  deck = new Deck();
-  factorManager = new FactorManager();
-  factorDisplay = new FactorDisplay( 
-    factorManager,
-    {
-      'x': 0.50,
-      'y': 0.75,
-      'width': 0.58,
-      'height': 0.32,
-      'padding': 0.1,
-      'rounding': 0.02,
-    }
-  );
+  game.start();
 
   loadTable(
     exampleCSVPath,
     'csv',
     'header',
-    (t) => { exampleCSV = t; loadFromCSV(t); },
+    (t) => {
+      exampleCSV = t;
+      gameData = loadGameDataFromTable(t);
+      game.startNewGame(gameData);
+
+    },
     () => { console.warn("No example csv found.") }
   );
-
-  // // Yes Button
-  // buttons.push(
-  //   new Button({
-  //     'id': 'swipeYes',
-  //     'x': width * 0.888,
-  //     'y': height * 0.33,
-  //     'radius': width * 0.065,
-  //     'colour': palette['positive'],
-  //     'OnHover': () => { previewChoice('swipeYes'); },
-  //     'OnHoverExit': () => { clearPreviews() },
-  //     'OnClick': () => { enactChoice('swipeYes'); },
-  //   }
-  //   ));
-
-  // // No Button
-  // buttons.push(
-  //   new Button({
-  //     'id': 'swipeNo',
-  //     'x': width * 0.111,
-  //     'y': height * 0.33,
-  //     'radius': width * 0.065,
-  //     'colour': palette['negative'],
-  //     'OnHover': () => { previewChoice('swipeNo'); },
-  //     'OnHoverExit': () => { clearPreviews(); },
-  //     'OnClick': () => { enactChoice('swipeNo'); },
-  //   }
-  //   ));
 
 }

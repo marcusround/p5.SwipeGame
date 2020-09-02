@@ -4,7 +4,7 @@ class SwipeGameUI {
 
     this.game = swipeGame;
     
-    this.card = new CardUI();
+    this.cardUI = new CardUI();
 
     this.factorDisplay = new FactorDisplay(
       this.game.factorManager,
@@ -22,8 +22,75 @@ class SwipeGameUI {
 
   draw() {
 
+    this.cardUI.draw();
+    this.factorDisplay.draw();
 
+  }
+
+  onDealNewCard() {
+
+    this.cardUI.setPosition('start');
+    this.cardUI.setTarget('center');
+    
+  }
+
+  onSwipeNo() {
+
+    this.cardUI.setTarget('swipeYes');
+
+  }
+  
+  onSwipeYes() {
+
+    this.cardUI.setTarget('swipeNo');
+
+  }
+
+  onSwipePreviewYes() {
+
+    this.cardUI.setTarget('swipePreviewYes');
+
+  }
+
+  onSwipePreviewNo() {
+
+    this.cardUI.setTarget('swipePreviewNo');
+    
+  }
+  
+  update() {
+
+    this.cardUI.changeCard(this.game.activeCard);
+    this.factorDisplay.evaluateMousePosition(mouseX, mouseY);
 
   }
 
 }
+
+  // // Yes Button
+  // buttons.push(
+  //   new Button({
+  //     'id': 'swipeYes',
+  //     'x': width * 0.888,
+  //     'y': height * 0.33,
+  //     'radius': width * 0.065,
+  //     'colour': palette['positive'],
+  //     'OnHover': () => { previewChoice('swipeYes'); },
+  //     'OnHoverExit': () => { clearPreviews() },
+  //     'OnClick': () => { enactChoice('swipeYes'); },
+  //   }
+  //   ));
+
+  // // No Button
+  // buttons.push(
+  //   new Button({
+  //     'id': 'swipeNo',
+  //     'x': width * 0.111,
+  //     'y': height * 0.33,
+  //     'radius': width * 0.065,
+  //     'colour': palette['negative'],
+  //     'OnHover': () => { previewChoice('swipeNo'); },
+  //     'OnHoverExit': () => { clearPreviews(); },
+  //     'OnClick': () => { enactChoice('swipeNo'); },
+  //   }
+  //   ));

@@ -14,7 +14,7 @@ class FactorBar {
 
   }
 
-  EvaluateMousePosition(x, y) {
+  evaluateMousePosition(x, y) {
 
     const isUnderneathMouse = boolean(
       x < this.right &&
@@ -35,13 +35,13 @@ class FactorBar {
 
   }
 
-  SetPreview(amount) {
+  setPreview(amount) {
 
     this.preview = Number(amount);
 
   }
 
-  SetPreviewMode(string) {
+  setPreviewMode(string) {
 
     // 'FULL', 'PARTIAL', 'ALL' or 'NONE'
     // Anything else is equivalent to 'NONE'
@@ -51,7 +51,7 @@ class FactorBar {
   }
 
 
-  Draw() {
+  draw() {
 
     const fullPreview = Boolean(this.previewMode === 'FULL' || this.previewMode === 'ALL');
     const hintPreview = Boolean(this.previewMode === 'HINT' || this.previewMode === 'ALL');
@@ -87,7 +87,7 @@ class FactorBar {
       fill(palette['ui']);
       noStroke();
 
-      this.tooltip.Draw(mouseX + 10, this.bottom + 10);
+      this.tooltip.draw(mouseX + 10, this.bottom + 10);
 
     }
 
@@ -111,20 +111,20 @@ class FactorDisplay {
   constructor(factorManager, relativeSizes) {
 
     this.factorManager = factorManager;
-    this.factorManager.factorListeners.push(x => this.OnSetFactors(x));
+    this.factorManager.factorListeners.push(x => this.onSetFactors(x));
     this.bars = [];
 
-    this.Resize(relativeSizes);
+    this.resize(relativeSizes);
 
   }
 
-  EvaluateMousePosition(x, y) {
+  evaluateMousePosition(x, y) {
 
-    this.bars.forEach(bar => bar.EvaluateMousePosition(x, y));
+    this.bars.forEach(bar => bar.evaluateMousePosition(x, y));
 
   }
 
-  OnSetFactors(factors) {
+  onSetFactors(factors) {
     factors.forEach(factor => {
       this.bars.push(
         new FactorBar(
@@ -135,10 +135,10 @@ class FactorDisplay {
         )
       )
     });
-    this.Resize();
+    this.resize();
   }
 
-  Resize(p) {
+  resize(p) {
 
     // Resize relative to canvas
 
@@ -160,12 +160,11 @@ class FactorDisplay {
       'padding': this.padding, // Padding is always relative to each bar, eg 0.1
     }
 
-    this.ResizeAbsolute(absoluteMeasurements);
-
+    this.resizeAbsolute(absoluteMeasurements);
 
   }
 
-  ResizeAbsolute(p) {
+  resizeAbsolute(p) {
 
     // Set absolute display parameters
     if (this.bars.length == 0) { return; }
@@ -194,10 +193,10 @@ class FactorDisplay {
 
   }
 
-  Draw() {
+  draw() {
 
     this.bars.forEach(bar => {
-      bar.Draw();
+      bar.draw();
     });
 
   }
@@ -211,11 +210,11 @@ class Tooltip {
     this.relativeTextSize = p.relativeTextSize || 0.025;
     this.padding = p.padding || 0.05;
 
-    this.Resize();
+    this.resize();
 
   }
 
-  Resize(newRelativeTextSize) {
+  resize(newRelativeTextSize) {
 
     push();
 
@@ -232,7 +231,7 @@ class Tooltip {
 
   }
 
-  Draw(x, y) {
+  draw(x, y) {
 
     push();
 

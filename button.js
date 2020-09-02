@@ -17,7 +17,19 @@ class Button {
         
     }
 
-    EvaluateMousePress ( x, y ) {
+    draw () {
+        push();
+
+        noStroke();
+        ellipseMode(RADIUS);
+        fill(this.colour);
+
+        ellipse(this.x, this.y, this.radius, this.radius);
+                
+        pop();
+    }
+    
+    evaluateMousePress ( x, y ) {
 
         if (this.OnClick && this.IsUnderneathPoint(x,y)) {
             this.OnClick();
@@ -26,7 +38,7 @@ class Button {
         
     }
 
-    EvaluateMousePosition ( x, y ) {
+    evaluateMousePosition ( x, y ) {
 
         if ( this.IsUnderneathPoint( x, y ) ) {
 
@@ -54,22 +66,10 @@ class Button {
         
     }
 
-    IsUnderneathPoint ( x, y ) {
+    isUnderneathPoint ( x, y ) {
 
         return dist(x, y, this.x, this.y) < this.radius;
         
-    }
-
-    Draw () {
-        push();
-
-        noStroke();
-        ellipseMode(RADIUS);
-        fill(this.colour);
-
-        ellipse(this.x, this.y, this.radius, this.radius);
-                
-        pop();
     }
 
 }

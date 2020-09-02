@@ -1,32 +1,83 @@
 class SwipeGame {
 
-    constructor() {
+  constructor(callbacks) {
 
-        this.factorManager = new FactorManager();
-        this.deck = new Deck();
-        this.Reset();
-        
+    this.deck = new Deck();
+    this.factorManager = new FactorManager(this);
+    this.isActive = false;
+    this.reset();
+
+  }
+
+  addCards(cards) {
+
+    cards.forEach(card => {
+      this.deck.addCardToBottom(card);
+    });
+
+  }
+
+  dealNewCard() {
+
+    if (this.activeCard) {
+      this.deck.addCardToBottom(this.activeCard);
     }
 
-    AddCards(cards) {
+    this.activeCard = this.deck.dealTopCard();
 
-        cards.forEach(card => {
-            this.deck.AddCardToBottom(card);
-        });
-        
-    }
+  }
 
-    Reset() {
+  enactChoice(choice) {
 
-        this.cards = {};
-        this.deck.Clear();
+    if (!this.activeCard) { return null; };
 
-    }
+    const effects = this.activeCard.getEffects(choice);
 
-    Start() {
+    this.factorManager.applyEffects(effects);
 
-        this.activeCard = this.deck.DealTopCard();
-        
-    }
-    
+    this.dealNewCard();
+
+  }
+
+  reset() {
+
+    this.cards = {};
+    this.deck.clear();
+
+  }
+
+  start() {
+
+    if (this.deck.length === 0) { console.warn("Can't start game with empty deck.") }
+
+    this.isActive = true;
+
+    this.dealNewCard();
+
+  }
+
+  startNewGame(gameData) {
+
+    this.isActive = true;
+    this.cards = {};
+    this.deck.clear();
+
+    this.addCards(gameData.cards);
+
+    gameData.cards.forEach((card) => {
+      this.cards[card.id] = card;
+    })
+
+    this.factorManager.setFactors(gameData.factors);
+
+    this.start();
+
+  }
+
+
+
+  update() {
+
+  }
+
 }

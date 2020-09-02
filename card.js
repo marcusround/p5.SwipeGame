@@ -1,171 +1,172 @@
 class Card {
 
-    constructor() {
+  constructor() {
 
-        this.x = width * 0.5;
-        this.y = height * 0.33;
+    this._swipePosition = 0;
 
-        this.width = width * 0.56;
-        this.height = height * 0.44;
+    this._effects = {};
 
-        this._swipePosition = 0;
+  }
 
-        this._effects = {};
+  getEffects(effectsType, effectsName = null) {
 
-        this.SetSwipeState(0);
+    // eg.
+    //    effectsType = 'swipeYes', 'swipeNo'
+    //     effectName = 'Budget', 'Impressions'
 
+    if (effectsName) {
+      return this._effects[effectsType][effectsName];
+    } else {
+      return this._effects[effectsType];
     }
 
+  }
 
-    EvaluateMousePress(x,y) {
+  setEffects(effectsType, effects) {
 
-        if ( this.IsUnderneathPoint(x,y) ) {
+    // eg.
+    //   effectsType = 'swipeYes'
+    //       effects = { 'Budget': -10, 'Impressions': +4 }
 
-            this.PickUp();
-            
-        }
-        
-    }
+    this._effects[effectsType] = effects;
 
-    EvaluateMouseReleased(x,y) {
+  }
 
-        this.PutDown();
-        
-    }
+  update() {
 
-    GetEffects(effectsType, effectsName = null) {
+    console.log(this._swipePosition);
 
-        // eg.
-        //    effectsType = 'swipeYes', 'swipeNo'
-        //     effectName = 'Budget', 'Impressions'
-
-        if ( effectsName ) {
-            return this._effects[effectsType][effectsName];
-        } else {
-            return this._effects[effectsType];
-        }
-        
-    }
-
-    IsUnderneathPoint(x,y) {
-
-        return Boolean(
-            x < this.x + this.width/2 &&
-            x > this.x - this.width/2 &&
-            y < this.y + this.height/2 &&
-            y > this.y - this.height/2
-        )
-        
-    }
-
-    PickUp() {
-
-        this.isHeld = true;
-        
-    }
-
-    PutDown() {
-
-        this.isHeld = false;
-
-    }
-
-    SetEffects(effectsType, effects) {
-
-        // eg.
-        //   effectsType = 'swipeYes'
-        //       effects = { 'Budget': -10, 'Impressions': +4 }
-
-        this._effects[effectsType] = effects;
-        
-    }
-
-    SetSwipeState(swipeState) {
-
-        this._swipeTarget = swipeState;
-        
-    }
-    
-    Update() {
-
-        this._swipePosition += 0.06 * (this._swipeTarget - this._swipePosition);
-        console.log(this._swipePosition);
-        
-    }
+  }
 
 }
 
-
 class CardUI {
 
-    constructor(card) {
+  constructor(card) {
 
-        this.card = card;
+    this.changeCard(card);
+
+    this.positions = {
+
+      'previewYes': {
+        'x': width * 0.75,
+        'y': height * 0.44,
+        'r': Math.PI * 0.06,
+      },
+    
+      'previewNo': {
+        'x': width * 0.75,
+        'y': height * 0.44,
+        'r': -Math.PI * 0.06,
+      },
+    
+      'center': {
+        'x': width * 0.5,
+        'y': height * 0.33,
+        'r': 0,
+      },
+    
+      'start': {
+        'x': width * 0.4,
+        'y': height * -0.33,
+        'r': -Math.PI * 0.2,
+      },
+    
+      'swipeYes': { 
+        'x': width * 1.4,
+        'y': height * 0.5,
+        'r': Math.PI * 0.12,
+      },
+    
+      'swipeYes': { 
+        'x': width * -0.4,
+        'y': height * 0.5,
+        'r': Math.PI * -0.12,
+      },
+    
+    };
+
+    this.position = {}
+    this.setPosition('center');
+
+    this.width = width * 0.56;
+    this.height = height * 0.44;
+    
+    this.rounding = width * 0.02;
+
+    this.textSize = 32;
+
+  }
+
+  changeCard(card) {
+
+    if ( card !== this.card ) {
+
+      this.card = card;
 
     }
 
-    Draw() {
+  }
 
-        push();
-        
-        translate(this.position.x, this.position.y);
+  draw() {
+    
+    if ( !this.card ) { return null; }
+    
+    push();
 
-        const rot = this._swipePosition * Math.PI * 0.06;
-        rotate(this.rotation);
-        
-        rectMode(CENTER);
-        
-        noStroke();
-        fill(palette['ui']);
-        rect(0,0, this.width, this.height, width * 0.02);
-        
-        fill(palette['black']);
-        textAlign(CENTER, CENTER);
-        text(this.text, 0,0, this.width * 0.9, this.height * 0.9);
-        
-        pop();
+    translate(this.position.x, this.position.y);
+    rotate(this.rotation);
 
-    }
+    rectMode(CENTER);
 
-    MoveTowardsTarget(speed = 0.15) {
+    noStroke();
+    fill(palette['ui']);
+    rect(0, 0, this.width, this.height, this.rounding);
 
-        this.position.x += speed * this.target.x - this.position.x;
-        this.position.y += speed * this.target.y - this.position.y;
-        this.rotation += speed * this.target.rotation - this.rotation;
-        
-    }
+    fill(palette['black']);
+    textAlign(CENTER, CENTER);
+    textSize(this.textSize);
+    text(this.card.text, 0, 0, this.width * 0.9, this.height * 0.9);
 
-    SetTarget(targetName) {
+    pop();
 
-        switch (swipeState) {
+  }
 
-            case 'previewYes':
-                this.target.x = width * 0.75;
-                this.target.y = height * 0.44;
-                this.target.rotation = Math.PI * 0.25;
-                break;
-            
-            case 'previewNo':
-                this.target.x = width * 0.75;
-                this.target.y = height * 0.44;
-                this.target.rotation = -Math.PI * 0.25;
-                break;
+  getPosition(positionName) {
 
-            default:
-                this.target.x = width * 0.5;
-                this.target.y = height * 0.33;
-                this.rotation = 0;
-                break;
-            
-        }
-        
-    }
+    return this.positions[positionName];
+    
+  }
 
-    Update() {
+  setPosition(positionName) {
 
-        this.MoveTowardsTarget();
-        
-    }
+    const p = this.getPosition(positionName);
+
+    this.position.x = p.x;
+    this.position.y = p.y;
+    this.rotation = p.r;
+
+  }
+
+  setTarget(positionName) {
+
+    const p = this.getPosition(positionName);
+
+    this.target.x = p.x;
+    this.target.y = p.y;
+    this.target.rotation = p.r;
+
+  }
+
+  update() {
+
+    // Animation
+    const speed = 0.15;
+    this.position.x += speed * this.target.x - this.position.x;
+    this.position.y += speed * this.target.y - this.position.y;
+    this.rotation += speed * this.target.rotation - this.rotation;
+
+  }
 
 
 }
