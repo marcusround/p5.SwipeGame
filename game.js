@@ -39,6 +39,7 @@ class SwipeGame {
 
     const effects = this.activeCard.getEffects(choice);
 
+    this.clearPreviews();
     this.factorManager.applyEffects(effects);
 
   }
@@ -75,15 +76,18 @@ class SwipeGame {
 
     this.isActive = true;
     this.cards = {};
+    this.activeCard = null;
     this.deck.clear();
-
+    
     this.addCards(gameData.cards);
-
+    
     gameData.cards.forEach((card) => {
       this.cards[card.id] = card;
     })
-
+    
     this.factorManager.setFactors(gameData.factors);
+    console.log(this.cards);
+    console.log(this.deck);
 
     this.start();
 

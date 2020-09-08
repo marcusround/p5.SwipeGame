@@ -58,15 +58,15 @@ class FactorManager {
   setFactors(factors) {
 
     this.factors = [];
-
+    
     if (factors) {
-
+      
       factors.forEach(factor => {
         this.factors.push(factor);
       });
       
     }
-
+    
     this.factorListeners.forEach(listener => listener(factors));
     
   }

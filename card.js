@@ -2,8 +2,6 @@ class Card {
 
   constructor() {
 
-    this._swipePosition = 0;
-
     this._effects = {};
     
   }

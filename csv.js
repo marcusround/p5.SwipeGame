@@ -10,7 +10,7 @@ function downloadExampleCSV() {
 function handleFile(file) {
 
   if (!file.name.endsWith('.csv')) {
-    console.warn("Uploaded non-CSV file.")
+    console.error("Uploaded non-CSV file.")
     return null;
   }
 
@@ -18,8 +18,8 @@ function handleFile(file) {
     file.data,
     'csv',
     'header',
-    loadFromCSV,
-    console.warn("Error loading CSV.")
+    (t) => { game.startNewGame ( loadGameDataFromTable(t) ) },
+    (t) => { console.error("Error loading CSV."); console.log(t); }
   );
 
 }
@@ -78,17 +78,23 @@ function loadGameDataFromTable(table) {
 
     if (!(card.id && card.text)) {
       console.error("Invalid Card");
+      console.log(row);
       return;
     }
 
     if (gameData.cards[card.id]) {
       console.error("Duplicate card ID.");
+      console.log(row);
       return;
     }
 
     gameData.cards.push(card);
 
+    
   });
+  
+  console.log("GameData loaded.");
+  console.log(gameData);
 
   return gameData;
 

@@ -20,7 +20,7 @@ class SwipeGameUI {
 
   }
 
-  clearPreviews() {
+  goToCentre() {
 
     this.cardUI.setTarget('center');
     

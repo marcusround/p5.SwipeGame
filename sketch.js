@@ -106,6 +106,7 @@ const evaluateSwipePreview = function () {
     setPreview(swipeState);
 
   }
+  
 }();
 
 function keyPressed() {
@@ -150,7 +151,7 @@ function setPreview(choice) {
   if ( choice === 'none' ) {
 
     game.clearPreviews();
-    ui.clearPreviews();
+    ui.goToCentre();
     
   } else {
 
@@ -169,20 +170,20 @@ function setup() {
   const w = h * 9 / 16;
   
   createCanvas(w, h)
-  .position(innerHeight * 0.025, innerHeight * 0.025);
+    .position(innerHeight * 0.025, innerHeight * 0.025);
   
   createP("Upload custom CSV:")
-  .position(w * 0.1, innerHeight - 80);
+    .position(w * 0.1, innerHeight - 80);
   
   createFileInput(handleFile)
-  .position(250, innerHeight - 65);
+    .position(250, innerHeight - 65);
   
   createP("It must match this layout:")
-  .position(w * 0.1, innerHeight - 50);
+    .position(w * 0.1, innerHeight - 50);
   
   createButton("Download example CSV")
-  .position(250, innerHeight - 35)
-  .mousePressed(downloadExampleCSV);
+    .position(250, innerHeight - 35)
+    .mousePressed(downloadExampleCSV);
   
   textSize(height * 0.04);
   fill(255);
@@ -200,7 +201,6 @@ function setup() {
       exampleCSV = t;
       gameData = loadGameDataFromTable(t);
       game.startNewGame(gameData);
-
     },
     () => { console.warn("No example csv found.") }
   );
