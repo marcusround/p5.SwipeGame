@@ -20,7 +20,7 @@ class FactorBar {
       x < this.right &&
       x > this.left &&
       y < this.bottom &&
-      y > this.bgTop
+      y > this.top
     )
 
     if (isUnderneathMouse) {
@@ -74,7 +74,7 @@ class FactorBar {
 
       noFill();
       stroke(palette['highlight']);
-      strokeWeight(6);
+      strokeWeight(4);
 
       drawBGRect();
 
@@ -119,6 +119,9 @@ class FactorDisplay {
   }
 
   onSetFactors(factors) {
+    
+    this.bars = [];
+    
     factors.forEach(factor => {
       this.bars.push(
         new FactorBar(
@@ -129,7 +132,9 @@ class FactorDisplay {
         )
       )
     });
+
     this.resize();
+    
   }
 
   resize(p) {
