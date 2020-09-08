@@ -20,6 +20,12 @@ class SwipeGameUI {
 
   }
 
+  clearPreviews() {
+
+    this.cardUI.setTarget('center');
+    
+  }
+
   draw() {
 
     this.cardUI.draw();
@@ -34,33 +40,66 @@ class SwipeGameUI {
     
   }
 
-  onSwipeNo() {
+  onSwipe(choice) {
 
-    this.cardUI.setTarget('swipeYes');
-
+    if ( choice == 'swipeYes' ) {
+      
+      this.onSwipeYes();
+      
+    }
+    
+    else if ( choice == 'swipeNo' ) {
+      
+      this.onSwipeNo();
+      
+    }
+    
   }
   
   onSwipeYes() {
-
+    
+    this.cardUI.setTarget('swipeYes');
+    
+  }
+  
+  onSwipeNo() {
+    
     this.cardUI.setTarget('swipeNo');
 
   }
-
+  
   onSwipePreviewYes() {
 
-    this.cardUI.setTarget('swipePreviewYes');
+    this.cardUI.setTarget('previewYes');
 
   }
 
   onSwipePreviewNo() {
 
-    this.cardUI.setTarget('swipePreviewNo');
+    this.cardUI.setTarget('previewNo');
+    
+  }
+  
+  setPreview(choice) {
+
+    if ( choice == 'swipeYes' ) {
+
+      this.onSwipePreviewYes();
+
+    }
+
+    else if ( choice == 'swipeNo' ) {
+
+      this.onSwipePreviewNo();
+      
+    }
     
   }
   
   update() {
 
     this.cardUI.changeCard(this.game.activeCard);
+    this.cardUI.update();
     this.factorDisplay.evaluateMousePosition(mouseX, mouseY);
 
   }

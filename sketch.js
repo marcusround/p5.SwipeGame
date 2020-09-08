@@ -1,8 +1,5 @@
 const previewMode = 'HINT';
 
-let activeCard;
-let cards, deck;
-
 let game, ui;
 let buttons = [];
 
@@ -62,26 +59,22 @@ function draw() {
 
     if (mouseDiff > settings.swipeSensitivity * width) {
 
-      swipeState = 1;
+      swipeState = 'swipeYes';
 
     } else if (mouseDiff < -settings.swipeSensitivity * width) {
 
-      swipeState = -1;
+      swipeState = 'swipeNo';
 
     } else {
 
-      swipeState = 0;
+      swipeState = 'none';
 
     }
 
-    evaluateSwipePreview(swipeState);
-
-  } else {
-
-    swipeState = 0;
-
   }
-
+  
+  evaluateSwipePreview(swipeState);
+  
   game.update();
   ui.update();
 
@@ -92,14 +85,9 @@ function draw() {
 function enactChoice(choice) {
 
   game.enactChoice(choice);
+  ui.onSwipe(choice);
 
-  // factorManager.ApplyEffects(activeCard.GetEffects(choice));
-
-  // Put active card back to bottom of deck
-  // deck.AddCardToBottom(activeCard);
-
-  // // Deal new card
-  // activeCard = deck.DealTopCard();
+  setTimeout(dealNewCard, 700);
 
 }
 
@@ -108,14 +96,14 @@ const evaluateSwipePreview = function () {
   // Check if swipeState has changed since last time,
   // then update UI accordingly.
 
-  let prevSwipeState = 0;
+  let prevSwipeState = 'none';
   return (swipeState) => {
 
     if (swipeState === prevSwipeState) { return null; }
 
     prevSwipeState = swipeState;
 
-    setUIPreview(swipeState);
+    setPreview(swipeState);
 
   }
 }();
@@ -147,43 +135,28 @@ function mousePressed() {
     button.EvaluateMousePress(mouseX, mouseY);
   });
 
-  // activeCard.EvaluateMousePress(mouseX, mouseY);
-
 }
 
 function mouseReleased() {
 
-  if (swipeState === 1) { enactChoice('swipeYes') } else
-    if (swipeState === -1) { enactChoice('swipeNo') };
-
-  // activeCard.SetSwipeState(swipeState);
-  // activeCard.EvaluateMouseReleased(mouseX, mouseY);
+  if ( swipeState !== 'none' ) {
+    enactChoice(swipeState);
+  }
 
 }
 
-function previewChoice(choice) {
+function setPreview(choice) {
 
-  let effects = activeCard.GetEffects(choice);
-  factorManager.SetPreviews(effects);
+  if ( choice === 'none' ) {
 
-}
+    game.clearPreviews();
+    ui.clearPreviews();
+    
+  } else {
 
-function setUIPreview(swipeState) {
-
-  activeCard.SetSwipeState(swipeState);
-
-  if (swipeState === 1) {
-
-    previewChoice('swipeNo');
-
-  } else if (swipeState === -1) {
-
-    previewChoice('swipeYes');
-
-  } else if (swipeState === 0) {
-
-    clearPreviews();
-
+    game.setPreview(choice);
+    ui.setPreview(choice);
+    
   }
 
 }

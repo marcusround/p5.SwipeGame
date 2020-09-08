@@ -35,12 +35,6 @@ class FactorBar {
 
   }
 
-  setPreview(amount) {
-
-    this.preview = Number(amount);
-
-  }
-
   setPreviewMode(string) {
 
     // 'FULL', 'PARTIAL', 'ALL' or 'NONE'
@@ -179,7 +173,6 @@ class FactorDisplay {
     const top = this.y - this.height / 2;
     const bottom = this.y + this.height / 2;
     const eachWidth = this.width / this.bars.length;
-
 
     this.bars.forEach((bar, index) => {
 

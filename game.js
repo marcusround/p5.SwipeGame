@@ -17,6 +17,12 @@ class SwipeGame {
 
   }
 
+  clearPreviews() {
+
+    this.factorManager.clearPreviews();
+    
+  }
+
   dealNewCard() {
 
     if (this.activeCard) {
@@ -29,13 +35,11 @@ class SwipeGame {
 
   enactChoice(choice) {
 
-    if (!this.activeCard) { return null; };
+    if ( ! this.activeCard ) { return null; };
 
     const effects = this.activeCard.getEffects(choice);
 
     this.factorManager.applyEffects(effects);
-
-    this.dealNewCard();
 
   }
 
@@ -44,6 +48,17 @@ class SwipeGame {
     this.cards = {};
     this.deck.clear();
 
+  }
+
+  setPreview(choice) {
+
+    if ( this.activeCard ) {
+
+      const effects = this.activeCard.getEffects(choice);
+      this.factorManager.setPreviews(effects);
+
+    }
+    
   }
 
   start() {

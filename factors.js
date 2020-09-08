@@ -45,6 +45,16 @@ class FactorManager {
 
   }
 
+  clearPreviews() {
+
+    this.factors.forEach(factor => {
+
+      factor.setPreview(0);
+      
+    });
+    
+  }
+
   setFactors(factors) {
 
     this.factors = [];
@@ -63,12 +73,12 @@ class FactorManager {
   
   setPreviews(effects) {
 
-    factors.forEach(factor => {
-
+    this.factors.forEach(factor => {
+      
       factor.setPreview(effects[factor.name]);
       
     });
-    
+
   }
   
 }
