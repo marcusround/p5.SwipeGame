@@ -127,7 +127,7 @@ class FactorDisplay {
         new FactorBar(
           {
             'factor': factor,
-            'previewMode': previewMode,
+            'previewMode': settings.previewMode,
           }
         )
       )

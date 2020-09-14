@@ -78,13 +78,13 @@ function loadGameDataFromTable(table) {
 
     if (!(card.id && card.text)) {
       console.error("Invalid Card");
-      console.log(row);
+      console.warn(row);
       return;
     }
 
     if (gameData.cards[card.id]) {
       console.error("Duplicate card ID.");
-      console.log(row);
+      console.warn(row);
       return;
     }
 

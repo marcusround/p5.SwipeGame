@@ -1,10 +1,11 @@
 class SwipeGame {
 
-  constructor(callbacks) {
+  constructor() {
 
     this.deck = new Deck();
     this.factorManager = new FactorManager(this);
     this.isActive = false;
+    this._callbacks = {};
     this.reset();
 
   }
@@ -31,6 +32,8 @@ class SwipeGame {
 
     this.activeCard = this.deck.dealTopCard();
 
+    this.trigger('dealNewCard');
+
   }
 
   enactChoice(choice) {
@@ -42,6 +45,16 @@ class SwipeGame {
     this.clearPreviews();
     this.factorManager.applyEffects(effects);
 
+  }
+
+  on(eventName, callback) {
+
+    if ( this._callbacks[eventName] === undefined ) {
+      this._callbacks[eventName] = [];
+    }
+    
+    this._callbacks[eventName].push(callback);
+    
   }
 
   reset() {
@@ -86,14 +99,22 @@ class SwipeGame {
     })
     
     this.factorManager.setFactors(gameData.factors);
-    console.log(this.cards);
-    console.log(this.deck);
 
     this.start();
 
   }
 
+  trigger(eventName, ...args) {
 
+    const callbacks = this._callbacks[eventName];
+
+    if ( callbacks && callbacks.forEach ) {
+
+      callbacks.forEach( f => f(...args) )
+      
+    }
+    
+  }
 
   update() {
 

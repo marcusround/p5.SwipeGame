@@ -1,25 +1,11 @@
-const previewMode = 'HINT';
-
 let game, ui;
-let buttons = [];
 
-let mouseClickX, swipeState = 0;
-
-const palette = {
-
-  'background': '#456789',
-  'background-2': '#99eaea',
-  'positive': '#11d211',
-  'negative': '#e32222',
-  'foreground': '#00cccc',
-  'highlight': '#ffd633',
-  'ui': '#eeeeee',
-  'black': '#123456',
-
-}
+let mouseClickX;
+let swipeState = 'none';
 
 const settings = {
 
+  'previewMode': 'HINT', // 'FULL' or 'HINT', anything else is none
   'swipeSensitivity': 0.1,
 
 }
@@ -29,17 +15,6 @@ function clearPreviews() {
   factors.forEach(factor => {
     factor.SetPreview(0);
   })
-
-}
-
-function enactChoice() {
-
-}
-
-function dealNewCard() {
-
-  game.dealNewCard();
-  ui.onDealNewCard();
 
 }
 
@@ -65,10 +40,10 @@ function draw() {
 
       swipeState = 'swipeNo';
 
-    } else {
+    } else { 
 
       swipeState = 'none';
-
+      
     }
 
   }
@@ -77,7 +52,7 @@ function draw() {
   
   game.update();
   ui.update();
-
+  
   ui.draw();
 
 }
@@ -87,7 +62,7 @@ function enactChoice(choice) {
   game.enactChoice(choice);
   ui.onSwipe(choice);
 
-  setTimeout(dealNewCard, 700);
+  setTimeout(() => { game.dealNewCard() }, 700);
 
 }
 
@@ -131,10 +106,6 @@ function keyPressed() {
 function mousePressed() {
 
   mouseClickX = mouseX;
-
-  buttons.forEach(button => {
-    button.EvaluateMousePress(mouseX, mouseY);
-  });
 
 }
 
@@ -187,12 +158,12 @@ function setup() {
   
   textSize(height * 0.04);
   fill(255);
-  
+
   game = new SwipeGame();
   ui = new SwipeGameUI(game);
 
-  game.start();
-
+  game.on('dealNewCard', () => { swipeState = 'none' });
+  
   loadTable(
     exampleCSVPath,
     'csv',
