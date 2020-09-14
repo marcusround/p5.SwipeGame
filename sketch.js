@@ -62,7 +62,7 @@ function enactChoice(choice) {
   game.enactChoice(choice);
   ui.onSwipe(choice);
 
-  setTimeout(() => { game.dealNewCard() }, 700);
+  setTimeout(() => { game.nextTurn() }, 700);
 
 }
 

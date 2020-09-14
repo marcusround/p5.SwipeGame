@@ -1,5 +1,5 @@
 id,text,yes1,yes2,yes3,yes4,no1,no2,no3,no4,factor1,factor2,factor3,factor4,notes
-,,,,,,,,,,Lorem,Ipsum,Dolor,Sit Amet,This row used only for naming the factors.
+,,,,,,,,,,Traffic,Conversion Rate,Data Quality,Budget,This row used only for naming the factors.
 c1,Lorem ipsum dolor sit amet consectetur adipiscing elit,-10,8,-3,-10,0,-12,3,10,,,,,
 c2,Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua,-6,10,-11,-10,-5,6,10,10,,,,,
 c3,Ut enim ad minim veniam quis nostrud exercitation,12,2,3,-10,16,-4,0,10,,,,,

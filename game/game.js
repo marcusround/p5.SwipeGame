@@ -6,6 +6,12 @@ class SwipeGame {
     this.factorManager = new FactorManager(this);
     this.isActive = false;
     this._callbacks = {};
+
+    this.info = {
+      'cardsDealt': 0,
+      'currentPhase': 0,
+    };
+    
     this.reset();
 
   }
@@ -26,11 +32,12 @@ class SwipeGame {
 
   dealNewCard() {
 
-    if (this.activeCard) {
+    if (this.activeCard && this.activeCard.discardAfterUse === false ) {
       this.deck.addCardToBottom(this.activeCard);
     }
 
     this.activeCard = this.deck.dealTopCard();
+    this.info.cardsDealt += 1;
 
     this.trigger('dealNewCard');
 
@@ -45,6 +52,20 @@ class SwipeGame {
     this.clearPreviews();
     this.factorManager.applyEffects(effects);
 
+  }
+
+  nextTurn() {
+
+    if (this.info.cardsDealt % 3 === 0) {
+
+      this.phaseEnd();
+
+    } else {
+
+      this.dealNewCard();
+      
+    }
+    
   }
 
   on(eventName, callback) {
@@ -62,6 +83,28 @@ class SwipeGame {
     this.cards = {};
     this.deck.clear();
 
+  }
+
+  phaseEnd() {
+
+    const phaseEndCard = new Card({
+      'id': 'phaseEnd' + this.info.currentPhase,
+      'text': 'End of phase ' + this.info.currentPhase,
+    })
+
+    const effects = {'Budget': 10};
+    
+    phaseEndCard.setEffects('swipeYes', effects);
+    phaseEndCard.setEffects('swipeNo', effects);
+
+    this.deck.addCardToTop(phaseEndCard);
+    
+    this.trigger('phaseEnd');
+
+    this.info.currentPhase += 1;
+    
+    this.dealNewCard();
+    
   }
 
   setPreview(choice) {
