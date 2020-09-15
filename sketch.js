@@ -2,6 +2,8 @@ let game, ui;
 
 let mouseClickX;
 let swipeState = 'none';
+let gameOver = false;
+let endScore = 0;
 
 const settings = {
 
@@ -20,10 +22,29 @@ function clearPreviews() {
 
 function draw() {
 
+  if (gameOver) {
+
+    background(23, 45, 67);
+
+    push();
+    noStroke();
+    fill(palette['ui']);
+    textSize(height * 0.04);
+    textAlign(CENTER);
+    text("Game Over.\nScore: " + endScore, width/2, height/2);
+
+    pop();
+    return;
+
+  }
+
   if (!game.isActive) {
+
     background(23, 45, 67);
     return;
+    
   }
+
 
   background(palette['background']);
 
@@ -62,7 +83,7 @@ function enactChoice(choice) {
   game.enactChoice(choice);
   ui.onSwipe(choice);
 
-  setTimeout(() => { game.dealNewCard() }, 700);
+  setTimeout(() => { game.endTurn() }, 700);
 
 }
 
@@ -163,6 +184,7 @@ function setup() {
   ui = new SwipeGameUI(game);
 
   game.on('dealNewCard', () => { swipeState = 'none' });
+  game.on('gameEnd', (score) => { gameOver = true; endScore = score });
   
   loadTable(
     exampleCSVPath,
