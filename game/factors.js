@@ -9,8 +9,8 @@ class Factor {
   }
 
   applyEffect(effect) {
-
-    this.state += Number(effect);
+    
+    this.state += Number(effect) || 0;
 
     if (this.state > 100) { this.state = 100 }
     if (this.state < 0) { this.state = 0 }

@@ -1,0 +1,5 @@
+id,name,reviewEffects,endScore
+a,Lorem,,1
+b,Ipsum,,1
+c,Dolor,0.04b,0.7
+d,Sit Amet,0.1a;0.12b;-0.02c,0.5

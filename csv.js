@@ -19,7 +19,7 @@ function handleFile(file) {
     'csv',
     'header',
     (t) => { game.startNewGame ( loadGameDataFromTable(t) ) },
-    (t) => { console.error("Error loading CSV."); console.log(t); }
+    (t) => { console.error("Error loading CSV."); console.warn(t); }
   );
 
 }
@@ -51,10 +51,13 @@ function loadGameDataFromTable(table) {
     // Skip first row, which is factor names.
     if (index === 0) { return; };
 
-    const card = new Card();
+    const card = new Card({
 
-    card.id = row.get('id');
-    card.text = row.get('text');
+      'id': row.get('id'),
+      'text': row.get('text'),
+      'discardAfterUse': false,
+      
+    });
 
     const cardEffects = {
       'swipeYes': [],
@@ -78,13 +81,13 @@ function loadGameDataFromTable(table) {
 
     if (!(card.id && card.text)) {
       console.error("Invalid Card");
-      console.log(row);
+      console.warn(row);
       return;
     }
 
     if (gameData.cards[card.id]) {
       console.error("Duplicate card ID.");
-      console.log(row);
+      console.warn(row);
       return;
     }
 
