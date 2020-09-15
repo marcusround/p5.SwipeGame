@@ -54,17 +54,73 @@ class SwipeGame {
 
   }
 
-  nextTurn() {
+  endGame() {
 
-    if (this.info.cardsDealt % 3 === 0) {
+    const score = this.getScore();
 
-      this.phaseEnd();
+    console.log("Game over. Score: " + score);
 
+    this.trigger('gameEnd', score);
+
+    this.isActive = false;
+    
+  }
+
+  endPhase() {
+
+    const phaseEndCard = new Card({
+      'id': 'phaseEnd' + this.info.currentPhase,
+      'text': 'Monthly performance review. We have increased your budget.',
+      'type': 'info',
+    })
+
+    const effects = {'Budget': 10};
+    
+    phaseEndCard.setEffects('swipeYes', effects);
+    phaseEndCard.setEffects('swipeNo', effects);
+
+    this.deck.addCardToTop(phaseEndCard);
+    
+    this.trigger('phaseEnd');
+
+    this.info.currentPhase += 1;
+    
+    this.dealNewCard();
+
+  }
+
+  endTurn() {
+
+    if (this.info.cardsDealt >= 12) {
+  
+      this.endGame();
+      
+    } else if (this.info.cardsDealt % 4 === 0) {
+  
+      this.endPhase();
+  
     } else {
-
-      this.dealNewCard();
+  
+      this.nextTurn();
       
     }
+
+  }
+  
+  getScore() {
+
+    /**
+     * For now this just sums all factors,
+     * but will be procedural in final version
+     */
+
+    return this.factorManager.factors.reduce((a,b) => {return a + b.state}, 0);
+    
+  }
+  
+  nextTurn() {
+
+    this.dealNewCard();
     
   }
 
@@ -83,28 +139,6 @@ class SwipeGame {
     this.cards = {};
     this.deck.clear();
 
-  }
-
-  phaseEnd() {
-
-    const phaseEndCard = new Card({
-      'id': 'phaseEnd' + this.info.currentPhase,
-      'text': 'End of phase ' + this.info.currentPhase,
-    })
-
-    const effects = {'Budget': 10};
-    
-    phaseEndCard.setEffects('swipeYes', effects);
-    phaseEndCard.setEffects('swipeNo', effects);
-
-    this.deck.addCardToTop(phaseEndCard);
-    
-    this.trigger('phaseEnd');
-
-    this.info.currentPhase += 1;
-    
-    this.dealNewCard();
-    
   }
 
   setPreview(choice) {
@@ -136,13 +170,14 @@ class SwipeGame {
     this.deck.clear();
     
     this.addCards(gameData.cards);
+    this.deck.shuffle();
     
     gameData.cards.forEach((card) => {
       this.cards[card.id] = card;
     })
     
     this.factorManager.setFactors(gameData.factors);
-
+    
     this.start();
 
   }

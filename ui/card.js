@@ -78,9 +78,18 @@ class CardUI {
 
     rectMode(CENTER);
 
-    noStroke();
-    fill(palette['ui']);
+    push()
+    if ( this.card.type == "info") {
+      stroke(palette['ui']);
+      strokeWeight(height * 0.01);
+      fill(palette['background-2']);
+    } else {
+      noStroke();
+      fill(palette['ui']);
+    }
+
     rect(0, 0, this.width, this.height, this.rounding);
+    pop();
 
     fill(palette['black']);
     textAlign(CENTER, CENTER);

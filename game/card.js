@@ -5,6 +5,7 @@ class Card {
     this.id = p.id || "";
     this.text = p.text || "";
     this.discardAfterUse = ( p.discardAfterUse === false ) ? false : true;
+    this.type = p.type || "default";
 
     this._effects = {};
     

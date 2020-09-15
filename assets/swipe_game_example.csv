@@ -1,8 +1,17 @@
 id,text,yes1,yes2,yes3,yes4,no1,no2,no3,no4,factor1,factor2,factor3,factor4,notes
 ,,,,,,,,,,Traffic,Conversion Rate,Data Quality,Budget,This row used only for naming the factors.
-c1,Lorem ipsum dolor sit amet consectetur adipiscing elit,-10,8,-3,-10,0,-12,3,10,,,,,
-c2,Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua,-6,10,-11,-10,-5,6,10,10,,,,,
-c3,Ut enim ad minim veniam quis nostrud exercitation,12,2,3,-10,16,-4,0,10,,,,,
-c4,Ullamco laboris nisi ut aliquip ex ea commodo consequat,7,0,11,-10,0,0,-12,10,,,,,Anything you type in this column will have no effect on the game.
-c5,Duis aute irure dolor in reprehenderit in voluptate velit esse cillum,8,2,-13,-10,-12,-11,4,10,,,,,Use it to take notes etc.
-c6,Dolore eu fugiat nulla pariatur,0,5,8,-10,-10,-6,0,10,,,,,
+c1,Run a mass marketing ad campaign ,10,0,0,-5,0,0,0,0,,,,,
+c2,Run a targeted ad campaign,7,7,0,-15,0,0,0,0,,,,,
+c3,Optimise your site for mobile devices ,10,15,0,-15,0,0,0,0,,,,,
+c4,Add a recommendation engine to your site ,0,8,0,-15,0,0,0,0,,,,,Anything you type in this column will have no effect on the game.
+c5,Invest in a customer data platform ,0,12,20,-15,0,0,0,0,,,,,Use it to take notes etc.
+c6,Offer free delivery on orders over (X amount),5,5,0,0,0,0,0,0,,,,,
+c7,Improve product content on your site ,0,8,0,-5,0,0,0,0,,,,,
+c8,Offer a variety of payment options at checkout,0,8,0,8,0,0,0,0,,,,,
+c9,"Add a 'buy now, pay later' option at checkout (e.g. Klarna)",0,8,0,5,0,0,0,0,,,,,
+c10,Offer a variety of delivery options at checkout,0,5,0,2,0,0,0,0,,,,,
+c11,Increase your social media reach & following,12,0,0,-5,0,0,0,0,,,,,
+c12,Make efforts to increase your organic search ranking for relevant search terms,10,8,0,-15,0,0,0,0,,,,,
+c13,Take out paid search ads to promote your most popular search terms ,8,12,0,-15,0,0,0,0,,,,,
+c14,Invest in an mCommerce app with personalised push notifications,0,8,0,-30,0,0,0,0,,,,,
+c15,Offer free returns / return in-store?,5,5,0,-2,0,0,0,0,,,,,
