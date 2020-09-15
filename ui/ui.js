@@ -1,9 +1,24 @@
+
+
+const palette = {
+
+  'background': '#456789',
+  'background-2': '#99eaea',
+  'positive': '#11d211',
+  'negative': '#e32222',
+  'foreground': '#00cccc',
+  'highlight': '#ffd633',
+  'ui': '#eeeeee',
+  'black': '#123456',
+
+}
+
 class SwipeGameUI {
 
   constructor(swipeGame) {
 
     this.game = swipeGame;
-    
+
     this.cardUI = new CardUI();
 
     this.factorDisplay = new FactorDisplay(
@@ -18,12 +33,14 @@ class SwipeGameUI {
       }
     );
 
+    this.game.on('dealNewCard', () => { this.onDealNewCard() });
+
   }
 
   goToCentre() {
 
     this.cardUI.setTarget('center');
-    
+
   }
 
   draw() {
@@ -37,37 +54,37 @@ class SwipeGameUI {
 
     this.cardUI.setPosition('start');
     this.cardUI.setTarget('center');
-    
+
   }
 
   onSwipe(choice) {
 
-    if ( choice == 'swipeYes' ) {
-      
+    if (choice == 'swipeYes') {
+
       this.onSwipeYes();
-      
+
     }
-    
-    else if ( choice == 'swipeNo' ) {
-      
+
+    else if (choice == 'swipeNo') {
+
       this.onSwipeNo();
-      
+
     }
-    
+
   }
-  
+
   onSwipeYes() {
-    
+
     this.cardUI.setTarget('swipeYes');
-    
+
   }
-  
+
   onSwipeNo() {
-    
+
     this.cardUI.setTarget('swipeNo');
 
   }
-  
+
   onSwipePreviewYes() {
 
     this.cardUI.setTarget('previewYes');
@@ -77,25 +94,25 @@ class SwipeGameUI {
   onSwipePreviewNo() {
 
     this.cardUI.setTarget('previewNo');
-    
+
   }
-  
+
   setPreview(choice) {
 
-    if ( choice == 'swipeYes' ) {
+    if (choice == 'swipeYes') {
 
       this.onSwipePreviewYes();
 
     }
 
-    else if ( choice == 'swipeNo' ) {
+    else if (choice == 'swipeNo') {
 
       this.onSwipePreviewNo();
-      
+
     }
-    
+
   }
-  
+
   update() {
 
     this.cardUI.changeCard(this.game.activeCard);
@@ -105,31 +122,3 @@ class SwipeGameUI {
   }
 
 }
-
-  // // Yes Button
-  // buttons.push(
-  //   new Button({
-  //     'id': 'swipeYes',
-  //     'x': width * 0.888,
-  //     'y': height * 0.33,
-  //     'radius': width * 0.065,
-  //     'colour': palette['positive'],
-  //     'OnHover': () => { previewChoice('swipeYes'); },
-  //     'OnHoverExit': () => { clearPreviews() },
-  //     'OnClick': () => { enactChoice('swipeYes'); },
-  //   }
-  //   ));
-
-  // // No Button
-  // buttons.push(
-  //   new Button({
-  //     'id': 'swipeNo',
-  //     'x': width * 0.111,
-  //     'y': height * 0.33,
-  //     'radius': width * 0.065,
-  //     'colour': palette['negative'],
-  //     'OnHover': () => { previewChoice('swipeNo'); },
-  //     'OnHoverExit': () => { clearPreviews(); },
-  //     'OnClick': () => { enactChoice('swipeNo'); },
-  //   }
-  //   ));
