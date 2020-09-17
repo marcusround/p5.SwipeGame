@@ -158,23 +158,23 @@ function setup() {
 
   
   // Fit to portrait 16:9
-  const h = innerHeight - 100;
+  const h = innerHeight;
   const w = h * 9 / 16;
   
   createCanvas(w, h)
-    .position(innerHeight * 0.025, innerHeight * 0.025);
-  
+    .position(0,0);
+    
   createP("Upload custom CSV:")
-    .position(w * 0.1, innerHeight - 80);
+    .position(w * 1.05, 10);
   
   createFileInput(handleFile)
-    .position(250, innerHeight - 65);
+    .position(w * 1.05, 50);
   
   createP("It must match this layout:")
-    .position(w * 0.1, innerHeight - 50);
+    .position(w * 1.05, 100);
   
   createButton("Download example CSV")
-    .position(250, innerHeight - 35)
+    .position(w * 1.05, 140)
     .mousePressed(downloadExampleCSV);
   
   textSize(height * 0.04);
@@ -192,7 +192,7 @@ function setup() {
     'header',
     (t) => {
       exampleCSV = t;
-      gameData = loadGameDataFromTable(t);
+      const gameData = loadGameDataFromTable(t);
       game.startNewGame(gameData);
     },
     () => { console.warn("No example csv found.") }
